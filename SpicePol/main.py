@@ -1,10 +1,18 @@
-import tkinter
-import tkinter.filedialog
+from tkinter import *
+from tkinter.filedialog import *
 import subprocess
 
-
-ide = tkinter.Tk()
+ide = Tk()
+icon = PhotoImage(file="SpicePol.png")
+background_color = "#353535"
+window_size = "640x480"
+text_color = "#ffffff"
+text_selection_background_color = "#0ac80a"
+window_highlight_color = "#10ff00"
+cursor_color = "#ffffff"
 ide.title('SpicePol IDE')
+ide.iconphoto(True, icon)
+ide.geometry(window_size)
 file_path = ''
 
 def set_file_path(path):
@@ -17,19 +25,19 @@ def set_file_path(path):
 
 def save_as():
     if file_path == '':
-        path = tkinter.filedialog.asksaveasfilename(filetypes = [('Python files', '*.py')])
+        path = asksaveasfilename(filetypes = [('Python files', '*.py')])
     else:
         path = file_path    
     with open(path, 'w') as f:
-        code = editor.get('1.0', tkinter.END)
+        code = editor.get('1.0', END)
         f.write(code)
         set_file_path(path)
 
 def open_file():
-    path = tkinter.filedialog.askopenfilename(filetypes = [('Python files', '*,py')])
+    path = askopenfilename(filetypes = [('Python files', '*,py')])
     with open(path, 'r') as f:
         code = f.read()
-        editor.delete('1.0', tkinter.END)
+        editor.delete('1.0', END)
         editor.insert('1.0', code)
         set_file_path(path)
 
@@ -37,8 +45,8 @@ def open_file():
 
 def run():
     if file_path == '':
-        save_prompt = tkinter.Toplevel()
-        text = tkinter.Label(save_prompt, text='Please save your code')
+        save_prompt = Toplevel()
+        text = Label(save_prompt, text='Please save your code')
         text.pack()
         return
     command = f'python3 {file_path}' #if u have normal python delete this '3'
@@ -52,10 +60,10 @@ def run():
 def bye():
     exit()
 
-menu_bar = tkinter.Menu(ide)
+menu_bar = Menu(ide, background= background_color, fg= text_color)
 
 #! FILE BAR
-file_bar = tkinter.Menu(menu_bar, tearoff = 0)
+file_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
 file_bar.add_command(label = 'Open', command = open_file)
 file_bar.add_command(label = 'New')
 file_bar.add_command(label = 'Save', command = save_as)
@@ -64,7 +72,7 @@ menu_bar.add_cascade(label = 'File', menu = file_bar)
 
 
 #! RUN BAR
-run_bar = tkinter.Menu(menu_bar, tearoff = 0)
+run_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
 run_bar.add_command(label = 'Run', command = run)
 run_bar.add_command(label = 'Exit', command = bye)
 menu_bar.add_cascade(label = 'Run', menu = run_bar)
@@ -73,10 +81,21 @@ menu_bar.add_cascade(label = 'Run', menu = run_bar)
 ide.config(menu = menu_bar)
 
 
-editor = tkinter.Text()
+editor = Text(background= background_color, 
+              highlightcolor= window_highlight_color, 
+              selectbackground= text_selection_background_color,
+              insertbackground= cursor_color,
+              fg= text_color
+              )
 editor.pack()
 
-code_output = tkinter.Text(height = 9)
+code_output = Text(height = 9, 
+                   background= background_color, 
+                   highlightcolor= window_highlight_color, 
+                   selectbackground= text_selection_background_color,
+                   insertbackground= cursor_color,
+                   fg= text_color
+                   )
 code_output.pack()
 
 
