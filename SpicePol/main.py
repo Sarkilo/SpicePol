@@ -34,7 +34,7 @@ def save_as():
         set_file_path(path)
 
 def open_file():
-    path = askopenfilename(filetypes = [('Python files', '*,py')])
+    path = askopenfilename(filetypes = [('Python files', '*.py')])
     with open(path, 'r') as f:
         code = f.read()
         editor.delete('1.0', END)
