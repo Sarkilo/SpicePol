@@ -1,29 +1,34 @@
+import subprocess
 from tkinter import *
 from tkinter.filedialog import *
-import subprocess
 
-ide = Tk()
-icon = PhotoImage(file="SpicePol.png")
+root = Tk()
+icon = PhotoImage(file="SpicePol/images/SpicePol.png")
+
 background_color = "#353535"
 background_color_2 = "#43336F"
 background_color_menu_bar = "#3D3D60"
-window_size = "640x480"
 text_color = "#ffffff"
 text_selection_background_color = "#0ac80a"
 window_highlight_color = "#10ff00"
 cursor_color = "#ffffff"
-ide.title('SpicePol IDE')
-ide.iconphoto(True, icon)
-ide.geometry(window_size)
+
+window_width = 1280
+window_height = 720
+screen_width = root.winfo_screenwidth()                 #get screen width
+screen_height = root.winfo_screenheight()               #get screen height
+center_x = int(screen_width/2 - window_width / 2)       # find the center point
+center_y = int(screen_height/2 - window_height / 2)     # find the center point
+root.resizable(True, True)
+root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')  #set window in the center (tak ladniusio)
+
+root.title('SpicePol IDE')
+root.iconphoto(True, icon)
 file_path = ''
 
 def set_file_path(path):
     global file_path
     file_path = path
-
-
-
-
 
 def save_as():
     if file_path == '':
@@ -57,19 +62,12 @@ def run():
     code_output.insert('1.0', output)
     code_output.insert('1.0',  error)
 
-
-
 def bye():
     exit()
     
+  
 
-   
-    
-    
-    
-    
-
-menu_bar = Menu(ide, background= background_color_menu_bar, fg= text_color)
+menu_bar = Menu(root, background= background_color_menu_bar, fg= text_color)
 
 #! FILE BAR
 file_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
@@ -92,10 +90,6 @@ menu_bar.add_cascade(label = 'Edit', menu = edit_bar)
 
 
 
-
-
-
-
 #! RUN BAR
 run_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
 run_bar.add_command(label = 'Run', command = run, background= background_color_2)
@@ -103,8 +97,10 @@ run_bar.add_command(label = 'Exit', command = bye, background= background_color_
 menu_bar.add_cascade(label = 'Run', menu = run_bar)
 
 
-ide.config(menu = menu_bar)
+root.config(menu = menu_bar)
 
+amount_of_lines_in_editor = 24
+amount_of_lines_in_code_output = 9
 
 editor = Text(background= background_color, 
               highlightcolor= window_highlight_color, 
@@ -112,16 +108,26 @@ editor = Text(background= background_color,
               insertbackground= cursor_color,
               fg= text_color
               )
-editor.pack()
 
-code_output = Text(height = 9, 
-                   background= background_color, 
+
+code_output = Text(background= background_color, 
                    highlightcolor= window_highlight_color, 
                    selectbackground= text_selection_background_color,
                    insertbackground= cursor_color,
                    fg= text_color
                    )
-code_output.pack()
 
 
-ide.mainloop()
+#Config column 1 and row 1
+Grid.columnconfigure(root, index= 0, weight= 1)
+Grid.rowconfigure(root, index= 0, weight= 1)
+
+#Configure row 2
+Grid.rowconfigure(root, index= 1, weight= 2)
+
+#Grid them to the screen
+editor.grid(row= 0, column= 0, sticky="nsew")
+code_output.grid(row= 1, column= 0, sticky="nsew")
+
+
+root.mainloop()
