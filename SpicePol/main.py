@@ -30,11 +30,18 @@ def set_file_path(path):
     global file_path
     file_path = path
 
-def save_as():
+def save():
     if file_path == '':
-        path = asksaveasfilename(filetypes = [('Python files', '*.py')])
+        path = asksaveasfilename(filetypes = [('Python files', '*.py'), ("All files", "*.*")])
     else:
         path = file_path    
+    with open(path, 'w') as f:
+        code = editor.get('1.0', END)
+        f.write(code)
+        set_file_path(path)
+
+def save_as():
+    path = asksaveasfilename(filetypes = [('Python files', '*.py'), ("All files", "*.*")]) 
     with open(path, 'w') as f:
         code = editor.get('1.0', END)
         f.write(code)
@@ -48,14 +55,15 @@ def open_file():
         editor.insert('1.0', code)
         set_file_path(path)
 
-
+def new_file():
+    path = "new.py"
+    with open(path, 'w+') as file:
+        code = file.read()
+        editor.delete('1.0', END)
+        editor.insert('1.0', code)
+        set_file_path(path)
 
 def run():
-    if file_path == '':
-        save_prompt = Toplevel()
-        text = Label(save_prompt, text='Please save your code')
-        text.pack()
-        return
     command = f'python3 {file_path}' #if u have normal python delete this '3'
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
@@ -72,8 +80,8 @@ menu_bar = Menu(root, background= background_color_menu_bar, fg= text_color)
 #! FILE BAR
 file_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
 file_bar.add_command(label = 'Open', command = open_file, background= background_color_2)
-file_bar.add_command(label = 'New', background= background_color_2)
-file_bar.add_command(label = 'Save', command = save_as, background= background_color_2)
+file_bar.add_command(label = 'New', command = new_file, background= background_color_2)
+file_bar.add_command(label = 'Save', command = save, background= background_color_2)
 file_bar.add_command(label = 'Save As', command = save_as, background= background_color_2)
 menu_bar.add_cascade(label = 'File', menu = file_bar)
 
@@ -88,14 +96,11 @@ edit_bar.add_command(label= 'Find', background= background_color_2)
 menu_bar.add_cascade(label = 'Edit', menu = edit_bar)
 
 
-
-
 #! RUN BAR
 run_bar = Menu(menu_bar, tearoff = 0, fg= text_color, background= background_color)
 run_bar.add_command(label = 'Run', command = run, background= background_color_2)
 run_bar.add_command(label = 'Exit', command = bye, background= background_color_2)
 menu_bar.add_cascade(label = 'Run', menu = run_bar)
-
 
 root.config(menu = menu_bar)
 
@@ -128,6 +133,15 @@ Grid.rowconfigure(root, index= 1, weight= 2)
 #Grid them to the screen
 editor.grid(row= 0, column= 0, sticky="nsew")
 code_output.grid(row= 1, column= 0, sticky="nsew")
+
+#Creates new file after program start
+new_file()
+
+#! Bind the Keyboard shortcuts
+root.bind('<Control-s>', save)
+root.bind('<Control-Shift-s>', save_as)
+root.bind('<Control-n>', new_file)
+root.bind('<Control-o>', open_file)
 
 
 root.mainloop()
